@@ -170,6 +170,54 @@ async function exemploValidacao() {
   }
 }
 
+// Exemplo 7: Redução de Payload (413)
+async function exemploReducaoPayload() {
+  console.log('\n=== Exemplo 7: Redução de Payload (413) ===');
+  
+  // Simular payload grande com campos opcionais
+  const payloadGrande = {
+    // Campos essenciais
+    name: 'João Silva',
+    email: 'joao@example.com',
+    
+    // Campos opcionais que serão removidos se 413
+    description: 'Uma descrição muito longa que aumenta o tamanho do payload...',
+    metadata: {
+      source: 'web',
+      campaign: 'summer2024',
+      extra: 'dados adicionais'
+    },
+    avatar: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
+    tags: ['tag1', 'tag2', 'tag3'],
+    notes: 'Notas adicionais sobre o usuário'
+  };
+
+  console.log('Payload original:', JSON.stringify(payloadGrande).length, 'bytes');
+  console.log('Campos:', Object.keys(payloadGrande).join(', '));
+
+  try {
+    const response = await reqify.post(
+      asUrl('https://httpbin.org/post'),
+      payloadGrande,
+      {
+        maxRetries: 2,
+        timeout: 5000
+      }
+    );
+
+    console.log('Status:', response.status);
+    console.log('Healed:', response.healed);
+    
+    if (response.healed) {
+      console.log('Mensagem:', response.healMessage);
+      console.log('Campos removidos: description, metadata, avatar, tags, notes');
+      console.log('Campos mantidos: name, email');
+    }
+  } catch (error) {
+    console.error('❌ Erro:', error);
+  }
+}
+
 // Executar todos os exemplos
 async function main() {
   console.log('🚀 Demonstração do Auto-Healing do Reqify\n');
@@ -184,6 +232,7 @@ async function main() {
   await exemploMonitoramento();
   await exemploComparacao();
   await exemploValidacao();
+  await exemploReducaoPayload();
   
   console.log('\n' + '='.repeat(50));
   console.log('✅ Demonstração concluída!');
@@ -200,5 +249,6 @@ export {
   exemploCreateValueFromType,
   exemploMonitoramento,
   exemploComparacao,
-  exemploValidacao
+  exemploValidacao,
+  exemploReducaoPayload
 };
