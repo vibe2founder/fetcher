@@ -11,34 +11,62 @@ export declare const asMethod: (method: string) => HttpMethod;
 export declare const asStatusCode: (status: number) => StatusCode;
 export declare const asHeaderName: (name: string) => HeaderName;
 export declare const asHeaderValue: (value: string) => HeaderValue;
-export type TsAxiosHeaders = Record<HeaderName, HeaderValue> | Record<string, string>;
-export interface TsAxiosRequestConfig<D = any> {
+export type ReqifyHeaders = Record<HeaderName, HeaderValue> | Record<string, string>;
+export interface ReqifyRequestConfig<D = any> {
     url: Url;
     method?: HttpMethod;
-    headers?: TsAxiosHeaders;
+    headers?: ReqifyHeaders;
     data?: D;
     params?: Record<string, string | number | boolean>;
     responseType?: 'json' | 'text' | 'stream';
+    timeout?: number;
+    maxRetries?: number;
+    retryDelay?: number;
+    autoHeal?: boolean;
 }
-export interface TsAxiosResponse<T = any, D = any> {
+export interface ReqifyResponse<T = any, D = any> {
     data: T;
     status: StatusCode;
     statusText: string;
     headers: Headers;
-    config: TsAxiosRequestConfig<D>;
+    config: ReqifyRequestConfig<D>;
     request: Response;
+    healed?: boolean;
+    healMessage?: string;
 }
-export interface TsAxiosInstance {
-    <T = any, D = any>(config: TsAxiosRequestConfig<D>): Promise<TsAxiosResponse<T, D>>;
-    <T = any, D = any>(url: Url, config?: Omit<TsAxiosRequestConfig<D>, 'url'>): Promise<TsAxiosResponse<T, D>>;
-    get<T = any, D = any>(url: Url, config?: Omit<TsAxiosRequestConfig<D>, 'url' | 'method'>): Promise<TsAxiosResponse<T, D>>;
-    delete<T = any, D = any>(url: Url, config?: Omit<TsAxiosRequestConfig<D>, 'url' | 'method'>): Promise<TsAxiosResponse<T, D>>;
-    head<T = any, D = any>(url: Url, config?: Omit<TsAxiosRequestConfig<D>, 'url' | 'method'>): Promise<TsAxiosResponse<T, D>>;
-    options<T = any, D = any>(url: Url, config?: Omit<TsAxiosRequestConfig<D>, 'url' | 'method'>): Promise<TsAxiosResponse<T, D>>;
-    post<T = any, D = any>(url: Url, data?: D, config?: Omit<TsAxiosRequestConfig<D>, 'url' | 'method' | 'data'>): Promise<TsAxiosResponse<T, D>>;
-    put<T = any, D = any>(url: Url, data?: D, config?: Omit<TsAxiosRequestConfig<D>, 'url' | 'method' | 'data'>): Promise<TsAxiosResponse<T, D>>;
-    patch<T = any, D = any>(url: Url, data?: D, config?: Omit<TsAxiosRequestConfig<D>, 'url' | 'method' | 'data'>): Promise<TsAxiosResponse<T, D>>;
+export interface ReqifyInstance {
+    <T = any, D = any>(config: ReqifyRequestConfig<D>): Promise<ReqifyResponse<T, D>>;
+    <T = any, D = any>(url: Url, config?: Omit<ReqifyRequestConfig<D>, 'url'>): Promise<ReqifyResponse<T, D>>;
+    get<T = any, D = any>(url: Url, config?: Omit<ReqifyRequestConfig<D>, 'url' | 'method'>): Promise<ReqifyResponse<T, D>>;
+    delete<T = any, D = any>(url: Url, config?: Omit<ReqifyRequestConfig<D>, 'url' | 'method'>): Promise<ReqifyResponse<T, D>>;
+    head<T = any, D = any>(url: Url, config?: Omit<ReqifyRequestConfig<D>, 'url' | 'method'>): Promise<ReqifyResponse<T, D>>;
+    options<T = any, D = any>(url: Url, config?: Omit<ReqifyRequestConfig<D>, 'url' | 'method'>): Promise<ReqifyResponse<T, D>>;
+    post<T = any, D = any>(url: Url, data?: D, config?: Omit<ReqifyRequestConfig<D>, 'url' | 'method' | 'data'>): Promise<ReqifyResponse<T, D>>;
+    put<T = any, D = any>(url: Url, data?: D, config?: Omit<ReqifyRequestConfig<D>, 'url' | 'method' | 'data'>): Promise<ReqifyResponse<T, D>>;
+    patch<T = any, D = any>(url: Url, data?: D, config?: Omit<ReqifyRequestConfig<D>, 'url' | 'method' | 'data'>): Promise<ReqifyResponse<T, D>>;
 }
-export declare const tsaxios: TsAxiosInstance;
-export default tsaxios;
+export interface HealContext {
+    error: any;
+    config: ReqifyRequestConfig;
+    response?: Response;
+    attempt: number;
+}
+export interface HealResult {
+    shouldRetry: boolean;
+    config?: ReqifyRequestConfig;
+    message?: string;
+    data?: any;
+}
+/**
+ * Cria um valor baseado no tipo esperado quando a validação falha
+ * Heurística: analisa a mensagem de erro e o tipo esperado para gerar um valor válido
+ */
+export declare function createValueFromType(errorMessage: string, expectedType?: string): any;
+/**
+ * Auto-healer nativo do Reqify
+ * Detecta e corrige automaticamente erros comuns
+ */
+export declare function autoHeal(context: HealContext): Promise<HealResult>;
+export declare const reqify: ReqifyInstance;
+export default reqify;
 //# sourceMappingURL=index.d.ts.map

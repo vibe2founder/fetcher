@@ -311,7 +311,7 @@ export class AutoHealer {
   /**
    * Healing para erro de validação 422
    */
-  private static healValidationError(config: FetchEntityConfig, response: any): Promise<HealResult> {
+  private static healValidationError(config: FetchEntityConfig, _response: any): Promise<HealResult> {
     // Para fetchEntity, tentamos com timeout maior
     const healedConfig = {
       ...config,
@@ -418,26 +418,5 @@ export class AutoHealer {
       message: 'Increased timeout for malformed data'
     });
   }
-
-  /**
-   * Remove campos opcionais para reduzir tamanho
-   */
-  private static removeOptionalFields(data: any): any {
-    if (typeof data !== 'object' || data === null) return data;
-
-    const cleaned = { ...data };
-    
-    // Lista de campos comumente opcionais
-    const optionalFields = ['description', 'notes', 'metadata', 'extra', 'details'];
-    
-    for (const field of optionalFields) {
-      if (field in cleaned) {
-        delete cleaned[field];
-      }
-    }
-
-    return cleaned;
-  }
-
 
 }
