@@ -6,7 +6,7 @@
 - **Auto-Healing System**: Sistema nativo de auto-correção de erros HTTP
   - Healing para 401 Unauthorized (refresh de token)
   - Healing para 403 Forbidden (ajuste de timeout)
-  - Healing para 413 Payload Too Large (aumento de timeout)
+  - Healing para 413 Payload Too Large (remoção de campos opcionais do payload)
   - Healing para 422 Unprocessable Entity (criação de valores por tipo)
   - Healing para 429 Rate Limit (respeita Retry-After ou backoff exponencial)
   - Healing para Timeout (aumento progressivo até 30s)
@@ -34,17 +34,22 @@
 - Atualização do README.md com seção de auto-healing
 
 ### ✅ Tests
-- 12 testes automatizados cobrindo todos os tipos de healing
+- 13 testes automatizados cobrindo todos os tipos de healing
 - 100% de cobertura das funcionalidades de auto-healing
 - Testes para heurística de criação de valores
 - Testes para configuração de auto-healing
+- Testes para redução de payload (413)
 
 ### 🔧 Technical Details
 - Retry inteligente com backoff exponencial
 - Timeout progressivo (dobra a cada tentativa, máximo 30s)
 - Respeita headers HTTP (Retry-After)
 - Análise semântica de mensagens de erro
+- Redução automática de payload (remove campos opcionais recursivamente)
 - Zero dependências externas
+
+### 🐛 Fixed
+- Estratégia de healing do 413 agora remove campos opcionais do payload ao invés de aumentar timeout
 
 ## [0.2.0] - 2024-12-05
 
