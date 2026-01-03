@@ -1,6 +1,6 @@
 {
   "name": "@purecore/reqify",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -22,7 +22,7 @@
   ],
   "scripts": {
     "build": "tsc",
-    "test": "node --test --import tsx --enable-source-maps tests/*.test.ts"
+    "test": "bun test"
   },
   "devDependencies": {
     "@types/node": "^20.14.9",
