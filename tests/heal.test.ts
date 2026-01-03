@@ -287,7 +287,10 @@ describe("Auto-Healing Tests", () => {
         assert.strictEqual(callCount, 2);
         assert.strictEqual(response.healed, true);
         assert.ok(response.healMessage?.includes("Rate limited"));
-        assert.ok(elapsed >= 1000, "Deve ter esperado pelo menos 1 segundo");
+        assert.ok(
+          elapsed >= 900,
+          "Deve ter esperado pelo menos 900ms (tolerância para jitter)"
+        );
       } finally {
         global.fetch = originalFetch;
       }
