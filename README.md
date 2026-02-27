@@ -4,12 +4,6 @@
   <p align="center">Just swap the import and use a lighter, native implementation without changing any code.</p>
 </p>
 
-<p align="center">
-  <img src="https://img.shields.io/npm/v/@purecore/reqify?style=flat-square&color=blue" alt="npm version">
-  <img src="https://img.shields.io/npm/dm/@purecore/reqify?style=flat-square&color=green" alt="downloads">
-  <img src="https://img.shields.io/npm/l/@purecore/reqify?style=flat-square&color=orange" alt="license">
-  <img src="https://img.shields.io/bundlephobia/min/@purecore/reqify?style=flat-square&color=purple" alt="bundle size">
-</p>
 
 ---
 
@@ -317,4 +311,5 @@ MIT License - see the [LICENSE](LICENSE) file for details.
 <p align="center">
   <a href="https://github.com/suissa/purecore-reqify">⭐ Star us on GitHub</a>
 </p>
+
 
