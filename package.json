@@ -1,6 +1,6 @@
 {
   "name": "@vibe2founder/request2http",
-  "version": "0.3.3",
+  "version": "0.1.0",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -20,6 +20,9 @@
     "axios",
     "http"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "tsc",
     "test": "bun test"
