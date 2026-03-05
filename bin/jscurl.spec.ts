@@ -52,7 +52,7 @@ async function runCli(args) {
   }
 }
 
-describe("Reqify CLI (jscurl) - Native Tests", () => {
+describe("request2http CLI (jscurl) - Native Tests", () => {
   it("deve exibir o menu de ajuda quando executado com --help", async () => {
     const { output, command } = await runCli("--help");
 
@@ -91,7 +91,7 @@ describe("Reqify CLI (jscurl) - Native Tests", () => {
     );
 
     assert.ok(
-      output.includes("--- Resposta Reqify ---") || output.includes("delectus"),
+      output.includes("--- Resposta request2http ---") || output.includes("delectus"),
       `Deve mostrar o cabeçalho ou o dado esperado.\nComando: ${command}\nRecebido: ${output}`
     );
     assert.ok(

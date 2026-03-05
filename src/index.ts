@@ -18,14 +18,14 @@ export const asHeaderName = (name: string): HeaderName => name as HeaderName;
 export const asHeaderValue = (value: string): HeaderValue =>
   value as HeaderValue;
 
-export type ReqifyHeaders =
+export type request2httpHeaders =
   | Record<HeaderName, HeaderValue>
   | Record<string, string>;
 
-export interface reqify<D = any> {
+export interface request2http<D = any> {
   url: Url;
   method?: HttpMethod;
-  headers?: ReqifyHeaders;
+  headers?: request2httpHeaders;
   data?: D;
   params?: Record<string, string | number | boolean>;
   responseType?: "json" | "text" | "stream";
@@ -35,68 +35,68 @@ export interface reqify<D = any> {
   autoHeal?: boolean;
 }
 
-export interface ReqifyResponse<T = any, D = any> {
+export interface request2httpResponse<T = any, D = any> {
   data: T;
   status: StatusCode;
   statusText: string;
   headers: Headers;
-  config: reqify<D>;
+  config: request2http<D>;
   request: Response;
   healed?: boolean;
   healMessage?: string;
 }
 
-export interface ReqifyInstance {
-  <T = any, D = any>(config: reqify<D>): Promise<ReqifyResponse<T, D>>;
-  <T = any, D = any>(url: Url, config?: Omit<reqify<D>, "url">): Promise<
-    ReqifyResponse<T, D>
+export interface request2httpInstance {
+  <T = any, D = any>(config: request2http<D>): Promise<request2httpResponse<T, D>>;
+  <T = any, D = any>(url: Url, config?: Omit<request2http<D>, "url">): Promise<
+    request2httpResponse<T, D>
   >;
 
   get<T = any, D = any>(
     url: Url,
-    config?: Omit<reqify<D>, "url" | "method">
-  ): Promise<ReqifyResponse<T, D>>;
+    config?: Omit<request2http<D>, "url" | "method">
+  ): Promise<request2httpResponse<T, D>>;
   delete<T = any, D = any>(
     url: Url,
-    config?: Omit<reqify<D>, "url" | "method">
-  ): Promise<ReqifyResponse<T, D>>;
+    config?: Omit<request2http<D>, "url" | "method">
+  ): Promise<request2httpResponse<T, D>>;
   head<T = any, D = any>(
     url: Url,
-    config?: Omit<reqify<D>, "url" | "method">
-  ): Promise<ReqifyResponse<T, D>>;
+    config?: Omit<request2http<D>, "url" | "method">
+  ): Promise<request2httpResponse<T, D>>;
   options<T = any, D = any>(
     url: Url,
-    config?: Omit<reqify<D>, "url" | "method">
-  ): Promise<ReqifyResponse<T, D>>;
+    config?: Omit<request2http<D>, "url" | "method">
+  ): Promise<request2httpResponse<T, D>>;
 
   post<T = any, D = any>(
     url: Url,
     data?: D,
-    config?: Omit<reqify<D>, "url" | "method" | "data">
-  ): Promise<ReqifyResponse<T, D>>;
+    config?: Omit<request2http<D>, "url" | "method" | "data">
+  ): Promise<request2httpResponse<T, D>>;
   put<T = any, D = any>(
     url: Url,
     data?: D,
-    config?: Omit<reqify<D>, "url" | "method" | "data">
-  ): Promise<ReqifyResponse<T, D>>;
+    config?: Omit<request2http<D>, "url" | "method" | "data">
+  ): Promise<request2httpResponse<T, D>>;
   patch<T = any, D = any>(
     url: Url,
     data?: D,
-    config?: Omit<reqify<D>, "url" | "method" | "data">
-  ): Promise<ReqifyResponse<T, D>>;
+    config?: Omit<request2http<D>, "url" | "method" | "data">
+  ): Promise<request2httpResponse<T, D>>;
 }
 
 // Tipos para auto-healing
 export interface HealContext {
   error: any;
-  config: reqify;
+  config: request2http;
   response?: Response;
   attempt: number;
 }
 
 export interface HealResult {
   shouldRetry: boolean;
-  config?: reqify;
+  config?: request2http;
   message?: string;
   data?: any;
 }
@@ -306,16 +306,16 @@ export async function autoHeal(context: HealContext): Promise<HealResult> {
   return { shouldRetry: false, message: "No healing strategy available" };
 }
 
-function createReqifyInstance(): ReqifyInstance {
-  const reqifyCore = async <T = any, D = any>(
-    urlOrConfig: Url | reqify<D>,
-    config?: Omit<reqify<D>, "url">
-  ): Promise<ReqifyResponse<T, D>> => {
-    let finalConfig: reqify<D>;
+function createrequest2httpInstance(): request2httpInstance {
+  const request2httpCore = async <T = any, D = any>(
+    urlOrConfig: Url | request2http<D>,
+    config?: Omit<request2http<D>, "url">
+  ): Promise<request2httpResponse<T, D>> => {
+    let finalConfig: request2http<D>;
     if (typeof urlOrConfig === "string") {
       finalConfig = { ...config, url: urlOrConfig as Url };
     } else {
-      finalConfig = urlOrConfig as reqify<D>;
+      finalConfig = urlOrConfig as request2http<D>;
     }
 
     const maxRetries = finalConfig.maxRetries ?? 3;
@@ -464,7 +464,7 @@ function createReqifyInstance(): ReqifyInstance {
     throw lastError || new Error("Max retries exceeded");
   };
 
-  const instance = reqifyCore as ReqifyInstance;
+  const instance = request2httpCore as request2httpInstance;
 
   instance.get = (url, config) =>
     instance({ ...config, url, method: asMethod("GET") });
@@ -485,5 +485,5 @@ function createReqifyInstance(): ReqifyInstance {
   return instance;
 }
 
-export const reqify = createReqifyInstance();
-export default reqify;
+export const request2http = createrequest2httpInstance();
+export default request2http;

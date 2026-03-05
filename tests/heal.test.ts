@@ -1,6 +1,6 @@
 import { describe, it, mock } from "bun:test";
 import assert from "node:assert";
-import { reqify, asUrl } from "../src/index.js";
+import { request2http, asUrl } from "../src/index.js";
 
 describe("Auto-Healing Tests", () => {
   describe("401 Unauthorized Healing", () => {
@@ -24,7 +24,7 @@ describe("Auto-Healing Tests", () => {
       }) as any;
 
       try {
-        const response = await reqify.get(
+        const response = await request2http.get(
           asUrl("https://api.example.com/data"),
           {
             timeout: 1000,
@@ -67,7 +67,7 @@ describe("Auto-Healing Tests", () => {
       }) as any;
 
       try {
-        const response = await reqify.get(
+        const response = await request2http.get(
           asUrl("https://api.example.com/data"),
           {
             timeout: 1000,
@@ -110,7 +110,7 @@ describe("Auto-Healing Tests", () => {
       }) as any;
 
       try {
-        const response = await reqify.post(
+        const response = await request2http.post(
           asUrl("https://api.example.com/data"),
           {
             name: "Test",
@@ -155,7 +155,7 @@ describe("Auto-Healing Tests", () => {
       }) as any;
 
       try {
-        await reqify.get(asUrl("https://api.example.com/data"), {
+        await request2http.get(asUrl("https://api.example.com/data"), {
           timeout: 1000,
           maxRetries: 2,
         });
@@ -198,7 +198,7 @@ describe("Auto-Healing Tests", () => {
       }) as any;
 
       try {
-        const response = await reqify.post(
+        const response = await request2http.post(
           asUrl("https://api.example.com/users"),
           { name: "Test" },
           { timeout: 1000, maxRetries: 2 }
@@ -236,7 +236,7 @@ describe("Auto-Healing Tests", () => {
       }) as any;
 
       try {
-        const response = await reqify.post(
+        const response = await request2http.post(
           asUrl("https://api.example.com/users"),
           { name: "Test" },
           { timeout: 1000, maxRetries: 2 }
@@ -274,7 +274,7 @@ describe("Auto-Healing Tests", () => {
       }) as any;
 
       try {
-        const response = await reqify.get(
+        const response = await request2http.get(
           asUrl("https://api.example.com/data"),
           {
             timeout: 5000,
@@ -317,7 +317,7 @@ describe("Auto-Healing Tests", () => {
       }) as any;
 
       try {
-        const response = await reqify.get(
+        const response = await request2http.get(
           asUrl("https://api.example.com/data"),
           {
             timeout: 5000,
@@ -353,7 +353,7 @@ describe("Auto-Healing Tests", () => {
       }) as any;
 
       try {
-        const response = await reqify.get(
+        const response = await request2http.get(
           asUrl("https://api.example.com/data"),
           {
             timeout: 50,
@@ -388,7 +388,7 @@ describe("Auto-Healing Tests", () => {
       }) as any;
 
       try {
-        const response = await reqify.get(
+        const response = await request2http.get(
           asUrl("https://api.example.com/data"),
           {
             timeout: 1000,
@@ -424,7 +424,7 @@ describe("Auto-Healing Tests", () => {
       }) as any;
 
       try {
-        const response = await reqify.get(
+        const response = await request2http.get(
           asUrl("https://api.example.com/data"),
           {
             timeout: 1000,
@@ -456,7 +456,7 @@ describe("Auto-Healing Tests", () => {
       }) as any;
 
       try {
-        const response = await reqify.get(
+        const response = await request2http.get(
           asUrl("https://api.example.com/data"),
           {
             timeout: 1000,
@@ -508,7 +508,7 @@ describe("Auto-Healing Tests", () => {
         }) as any;
 
         try {
-          const response = await reqify.post(
+          const response = await request2http.post(
             asUrl("https://api.example.com/test"),
             {},
             { timeout: 1000, maxRetries: 2 }
@@ -558,7 +558,7 @@ describe("Auto-Healing Tests", () => {
           tags: ["a", "b", "c"], // tags is in optionalFields list
         };
 
-        const response = await reqify.post(
+        const response = await request2http.post(
           asUrl("https://api.example.com/nested"),
           complexData,
           {

@@ -7,21 +7,21 @@ Este guia ajuda você a migrar seu código existente para aproveitar o sistema d
 ### Antes (sem auto-healing)
 
 ```typescript
-import reqify from "@purecore/reqify";
+import request2http from "@vibe2founder/request2http";
 
 try {
-  const response = await reqify.get("https://api.example.com/data");
+  const response = await request2http.get("https://api.example.com/data");
   console.log(response.data);
 } catch (error) {
   // Tratamento manual de erros
   if (error.response?.status === 429) {
     // Esperar e tentar novamente manualmente
     await new Promise((resolve) => setTimeout(resolve, 1000));
-    const retry = await reqify.get("https://api.example.com/data");
+    const retry = await request2http.get("https://api.example.com/data");
     console.log(retry.data);
   } else if (error.code === "ETIMEDOUT") {
     // Aumentar timeout manualmente
-    const retry = await reqify.get("https://api.example.com/data", {
+    const retry = await request2http.get("https://api.example.com/data", {
       timeout: 10000,
     });
     console.log(retry.data);
@@ -34,10 +34,10 @@ try {
 ### Depois (com auto-healing)
 
 ```typescript
-import reqify from "@purecore/reqify";
+import request2http from "@vibe2founder/request2http";
 
 // Auto-healing cuida de tudo automaticamente!
-const response = await reqify.get("https://api.example.com/data", {
+const response = await request2http.get("https://api.example.com/data", {
   maxRetries: 3,
   timeout: 5000,
 });
@@ -62,7 +62,7 @@ async function fetchWithRateLimit(url: string) {
 
   while (retries < maxRetries) {
     try {
-      return await reqify.get(url);
+      return await request2http.get(url);
     } catch (error) {
       if (error.response?.status === 429) {
         const retryAfter = error.response.headers.get("retry-after");
@@ -84,7 +84,7 @@ async function fetchWithRateLimit(url: string) {
 
 ```typescript
 // Simplesmente use o auto-healing!
-const response = await reqify.get(url, {
+const response = await request2http.get(url, {
   maxRetries: 3,
 });
 ```
@@ -99,7 +99,7 @@ async function fetchWithProgressiveTimeout(url: string) {
 
   for (const timeout of timeouts) {
     try {
-      return await reqify.get(url, { timeout });
+      return await request2http.get(url, { timeout });
     } catch (error) {
       if (error.code !== "ETIMEDOUT") throw error;
     }
@@ -111,7 +111,7 @@ async function fetchWithProgressiveTimeout(url: string) {
 #### Depois
 
 ```typescript
-const response = await reqify.get(url, {
+const response = await request2http.get(url, {
   timeout: 5000,
   maxRetries: 3,
 });
@@ -124,7 +124,7 @@ const response = await reqify.get(url, {
 ```typescript
 async function createUser(userData: any) {
   try {
-    return await reqify.post("/api/users", userData);
+    return await request2http.post("/api/users", userData);
   } catch (error) {
     if (error.response?.status === 422) {
       // Analisar erro e criar valores padrão manualmente
@@ -138,7 +138,7 @@ async function createUser(userData: any) {
         // ... mais campos
       }
 
-      return await reqify.post("/api/users", fixedData);
+      return await request2http.post("/api/users", fixedData);
     }
     throw error;
   }
@@ -149,7 +149,7 @@ async function createUser(userData: any) {
 
 ```typescript
 // Auto-healing cria valores automaticamente!
-const response = await reqify.post("/api/users", userData, {
+const response = await request2http.post("/api/users", userData, {
   maxRetries: 2,
 });
 ```
@@ -168,7 +168,7 @@ async function fetchMultiple(urls: string[]) {
 
     while (!success && retries < 3) {
       try {
-        const response = await reqify.get(url);
+        const response = await request2http.get(url);
         results.push(response.data);
         success = true;
       } catch (error) {
@@ -188,7 +188,7 @@ async function fetchMultiple(urls: string[]) {
 ```typescript
 async function fetchMultiple(urls: string[]) {
   return Promise.all(
-    urls.map((url) => reqify.get(url, { maxRetries: 3 }).then((r) => r.data))
+    urls.map((url) => request2http.get(url, { maxRetries: 3 }).then((r) => r.data))
   );
 }
 ```
@@ -200,7 +200,7 @@ async function fetchMultiple(urls: string[]) {
 ```typescript
 // Criar um wrapper para monitorar healings
 async function monitoredRequest<T>(url: string, config?: any): Promise<T> {
-  const response = await reqify.get(url, config);
+  const response = await request2http.get(url, config);
 
   if (response.healed) {
     // Log para sistema de monitoramento
@@ -212,7 +212,7 @@ async function monitoredRequest<T>(url: string, config?: any): Promise<T> {
     });
 
     // Métricas
-    metrics.increment("reqify.healed", {
+    metrics.increment("request2http.healed", {
       type: extractHealType(response.healMessage),
     });
   }
@@ -233,7 +233,7 @@ function extractHealType(message: string): string {
 
 ```typescript
 // Criar uma instância configurada
-import { createone-request-4-allInstance } from '@purecore/reqify';
+import { createone-request-4-allInstance } from '@vibe2founder/request2http';
 
 const api = createone-request-4-allInstance();
 
@@ -258,7 +258,7 @@ export async function apiRequest<T>(
 ```typescript
 // Para operações críticas onde você quer controle total
 async function criticalOperation(data: any) {
-  return reqify.post("/api/payment", data, {
+  return request2http.post("/api/payment", data, {
     autoHeal: false, // Sem healing automático
     maxRetries: 0, // Sem retries
   });
@@ -283,7 +283,7 @@ async function criticalOperation(data: any) {
 ### 1. Sempre Monitore Healings
 
 ```typescript
-const response = await reqify.get(url);
+const response = await request2http.get(url);
 
 if (response.healed) {
   // Log para análise posterior
@@ -299,13 +299,13 @@ if (response.healed) {
 
 ```typescript
 // APIs rápidas
-const fast = await reqify.get("/api/fast", {
+const fast = await request2http.get("/api/fast", {
   timeout: 2000,
   maxRetries: 2,
 });
 
 // APIs lentas
-const slow = await reqify.get("/api/slow", {
+const slow = await request2http.get("/api/slow", {
   timeout: 10000,
   maxRetries: 3,
 });
@@ -315,12 +315,12 @@ const slow = await reqify.get("/api/slow", {
 
 ```typescript
 // Operações de leitura: auto-heal ativo
-const data = await reqify.get("/api/data", {
+const data = await request2http.get("/api/data", {
   autoHeal: true,
 });
 
 // Operações críticas: auto-heal desabilitado
-const payment = await reqify.post("/api/payment", paymentData, {
+const payment = await request2http.post("/api/payment", paymentData, {
   autoHeal: false,
 });
 ```
@@ -329,7 +329,7 @@ const payment = await reqify.post("/api/payment", paymentData, {
 
 ```typescript
 try {
-  const response = await reqify.get(url, {
+  const response = await request2http.get(url, {
     maxRetries: 3,
   });
 
@@ -434,7 +434,7 @@ class one-request-4-allMetrics {
 const metrics = new one-request-4-allMetrics();
 
 const data = await metrics.track(() =>
-  reqify.get(url, { maxRetries: 3 })
+  request2http.get(url, { maxRetries: 3 })
 );
 
 console.log(metrics.getMetrics());
@@ -448,13 +448,13 @@ console.log(metrics.getMetrics());
 
 ```typescript
 // Antes
-const response = await reqify.get(url, { maxRetries: 5 });
+const response = await request2http.get(url, { maxRetries: 5 });
 
 // Depois
 import PQueue from "p-queue";
 const queue = new PQueue({ concurrency: 2 });
 
-const response = await queue.add(() => reqify.get(url, { maxRetries: 2 }));
+const response = await queue.add(() => request2http.get(url, { maxRetries: 2 }));
 ```
 
 ### Problema: Timeouts frequentes
@@ -463,10 +463,10 @@ const response = await queue.add(() => reqify.get(url, { maxRetries: 2 }));
 
 ```typescript
 // Antes
-const response = await reqify.get(url, { timeout: 5000 });
+const response = await request2http.get(url, { timeout: 5000 });
 
 // Depois
-const response = await reqify.get(url, { timeout: 10000 });
+const response = await request2http.get(url, { timeout: 10000 });
 ```
 
 ### Problema: Healings não estão funcionando
@@ -478,7 +478,7 @@ const response = await reqify.get(url, { timeout: 10000 });
 3. Erro é recuperável?
 
 ```typescript
-const response = await reqify.get(url, {
+const response = await request2http.get(url, {
   autoHeal: true, // ✅ Habilitado
   maxRetries: 3, // ✅ Permite retries
 });
@@ -490,4 +490,4 @@ Para mais informações:
 
 - [Documentação completa de Auto-Healing](AUTO_HEALING.md)
 - [Exemplos práticos](../examples/auto-healing-demo.ts)
-- [Issues no GitHub](https://github.com/suissa/purecore-reqify/issues)
+- [Issues no GitHub](https://github.com/suissa/purecore-request2http/issues)

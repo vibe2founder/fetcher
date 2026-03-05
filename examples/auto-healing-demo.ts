@@ -5,14 +5,14 @@
  * em diferentes cenários de erro.
  */
 
-import { reqify, asUrl, createValueFromType } from "../src/index.js";
+import { request2http, asUrl, createValueFromType } from "../src/index.js";
 
 // Exemplo 1: Rate Limiting com Retry-After
 async function exemploRateLimit() {
   console.log("\n=== Exemplo 1: Rate Limiting ===");
 
   try {
-    const response = await reqify.get(
+    const response = await request2http.get(
       asUrl("https://api.github.com/users/octocat"),
       {
         maxRetries: 3,
@@ -37,7 +37,7 @@ async function exemploTimeout() {
   console.log("\n=== Exemplo 2: Timeout Progressivo ===");
 
   try {
-    const response = await reqify.get(asUrl("https://httpbin.org/delay/3"), {
+    const response = await request2http.get(asUrl("https://httpbin.org/delay/3"), {
       timeout: 1000, // Timeout inicial muito curto
       maxRetries: 3,
     });
@@ -86,7 +86,7 @@ async function exemploMonitoramento() {
 
   for (const url of urls) {
     try {
-      const response = await reqify.get(asUrl(url), {
+      const response = await request2http.get(asUrl(url), {
         maxRetries: 2,
         timeout: 3000,
       });
@@ -114,7 +114,7 @@ async function exemploComparacao() {
   // Sem auto-healing
   console.log("\n--- Sem Auto-Healing ---");
   try {
-    const response = await reqify.get(url, {
+    const response = await request2http.get(url, {
       autoHeal: false,
       maxRetries: 2,
     });
@@ -126,7 +126,7 @@ async function exemploComparacao() {
   // Com auto-healing
   console.log("\n--- Com Auto-Healing ---");
   try {
-    const response = await reqify.get(url, {
+    const response = await request2http.get(url, {
       autoHeal: true,
       maxRetries: 2,
     });
@@ -143,7 +143,7 @@ async function exemploValidacao() {
   console.log("\n=== Exemplo 6: POST com Validação ===");
 
   try {
-    const response = await reqify.post(
+    const response = await request2http.post(
       asUrl("https://httpbin.org/post"),
       {
         name: "João Silva",
@@ -199,7 +199,7 @@ async function exemploReducaoPayload() {
   console.log("Campos:", Object.keys(payloadGrande).join(", "));
 
   try {
-    const response = await reqify.post(
+    const response = await request2http.post(
       asUrl("https://httpbin.org/post"),
       payloadGrande,
       {

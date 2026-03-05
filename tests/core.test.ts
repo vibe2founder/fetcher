@@ -1,5 +1,5 @@
 import { describe, it, expect, mock, beforeEach, afterEach } from "bun:test";
-import { reqify, asUrl, asHeaderName, asHeaderValue } from "../src/index.js";
+import { request2http, asUrl, asHeaderName, asHeaderValue } from "../src/index.js";
 
 describe("Core API Tests", () => {
   let originalFetch: typeof global.fetch;
@@ -20,7 +20,7 @@ describe("Core API Tests", () => {
         });
       });
 
-      const response = await reqify.get(asUrl("https://api.example.com/users"));
+      const response = await request2http.get(asUrl("https://api.example.com/users"));
 
       expect(response.status).toBe(200);
       expect(response.data).toEqual({ method: "GET" });
@@ -34,7 +34,7 @@ describe("Core API Tests", () => {
       });
 
       const data = { name: "John Doe", age: 30 };
-      await reqify.post(asUrl("https://api.example.com/users"), data);
+      await request2http.post(asUrl("https://api.example.com/users"), data);
 
       expect(capturedBody).toBe(JSON.stringify(data));
     });
@@ -46,7 +46,7 @@ describe("Core API Tests", () => {
         });
       });
 
-      const response = await reqify.put(
+      const response = await request2http.put(
         asUrl("https://api.example.com/users/1"),
         { name: "Jane" }
       );
@@ -58,7 +58,7 @@ describe("Core API Tests", () => {
         return new Response(null, { status: 204 });
       });
 
-      const response = await reqify.delete(
+      const response = await request2http.delete(
         asUrl("https://api.example.com/users/1")
       );
       expect(response.status).toBe(204);
@@ -73,7 +73,7 @@ describe("Core API Tests", () => {
         return new Response(JSON.stringify({}), { status: 200 });
       });
 
-      await reqify.get(asUrl("https://api.example.com/search"), {
+      await request2http.get(asUrl("https://api.example.com/search"), {
         params: { q: "bun", limit: 10, active: true },
       });
 
@@ -90,7 +90,7 @@ describe("Core API Tests", () => {
         return new Response("{}", { status: 200 });
       });
 
-      await reqify.get(asUrl("https://api.example.com/data"), {
+      await request2http.get(asUrl("https://api.example.com/data"), {
         headers: {
           [asHeaderName("X-Custom-Token")]: asHeaderValue("abc-123"),
           [asHeaderName("Authorization")]: asHeaderValue("Bearer token"),
@@ -106,7 +106,7 @@ describe("Core API Tests", () => {
         return new Response('{"not": "json", "raw": "text"}', { status: 200 });
       });
 
-      const response = await reqify.get(asUrl("https://api.example.com/text"), {
+      const response = await request2http.get(asUrl("https://api.example.com/text"), {
         responseType: "text",
       });
 
@@ -121,7 +121,7 @@ describe("Core API Tests", () => {
         return new Response("{}", { status: 200 });
       });
 
-      await reqify.get(asUrl("https://api.example.com/data"));
+      await request2http.get(asUrl("https://api.example.com/data"));
 
       // GET requests usually don't have body, so no Content-Type should be set automatically for JSON
       expect(capturedHeaders["Content-Type"]).toBeUndefined();

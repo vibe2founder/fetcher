@@ -30,7 +30,7 @@ async function fetchWithRetry(url) {
   let retries = 0;
   while (retries < 3) {
     try {
-      return await reqify.get(url);
+      return await request2http.get(url);
     } catch (error) {
       if (error.response?.status === 429) {
         const delay = Math.pow(2, retries) * 1000;
@@ -44,7 +44,7 @@ async function fetchWithRetry(url) {
 }
 
 // Depois: 1 linha
-const response = await reqify.get(url, { maxRetries: 3 });
+const response = await request2http.get(url, { maxRetries: 3 });
 ```
 
 **Redução**: 97% menos código
@@ -76,7 +76,7 @@ const response = await reqify.get(url, { maxRetries: 3 });
 
 ```typescript
 // GitHub, Twitter, Stripe, etc.
-const response = await reqify.get("https://api.github.com/users/octocat");
+const response = await request2http.get("https://api.github.com/users/octocat");
 // Auto-healing respeita Retry-After automaticamente
 ```
 
@@ -84,7 +84,7 @@ const response = await reqify.get("https://api.github.com/users/octocat");
 
 ```typescript
 // APIs de terceiros com latência variável
-const response = await reqify.get("https://slow-api.example.com/data", {
+const response = await request2http.get("https://slow-api.example.com/data", {
   timeout: 5000, // Começa com 5s
   maxRetries: 3, // Pode chegar a 20s automaticamente
 });
@@ -94,7 +94,7 @@ const response = await reqify.get("https://slow-api.example.com/data", {
 
 ```typescript
 // Comunicação entre serviços com falhas temporárias
-const response = await reqify.post("http://internal-service/api/data", payload);
+const response = await request2http.post("http://internal-service/api/data", payload);
 // Auto-healing recupera de falhas de rede automaticamente
 ```
 
@@ -102,7 +102,7 @@ const response = await reqify.post("http://internal-service/api/data", payload);
 
 ```typescript
 // APIs com validação estrita
-const response = await reqify.post("/api/users", userData);
+const response = await request2http.post("/api/users", userData);
 // Auto-healing cria valores padrão para campos faltantes
 ```
 
@@ -129,14 +129,14 @@ const response = await reqify.post("/api/users", userData);
 
 ```typescript
 // Apenas use normalmente - auto-healing está ativo!
-const response = await reqify.get(url);
+const response = await request2http.get(url);
 ```
 
 ### Nível Intermediário (15 minutos)
 
 ```typescript
 // Configure retries e timeout
-const response = await reqify.get(url, {
+const response = await request2http.get(url, {
   maxRetries: 3,
   timeout: 5000,
 });
@@ -151,7 +151,7 @@ if (response.healed) {
 
 ```typescript
 // Use funções exportadas para casos customizados
-import { autoHeal, createValueFromType } from "@purecore/reqify";
+import { autoHeal, createValueFromType } from "@vibe2founder/request2http";
 
 const healResult = await autoHeal(context);
 const defaultValue = createValueFromType("expected email");
@@ -193,7 +193,7 @@ const defaultValue = createValueFromType("expected email");
 
 ### Para Desenvolvedores
 
-1. ✅ Instalar/atualizar: `npm install @purecore/reqify@latest`
+1. ✅ Instalar/atualizar: `npm install @vibe2founder/request2http@latest`
 2. ✅ Usar normalmente - auto-healing já está ativo!
 3. ✅ Monitorar `response.healed` em produção
 4. ✅ Ajustar `maxRetries` e `timeout` conforme necessário
@@ -233,9 +233,9 @@ O sistema de auto-healing do one-request-4-all representa um **avanço significa
 
 ## 📞 Contato
 
-- GitHub: [suissa/purecore-reqify](https://github.com/suissa/purecore-reqify)
-- Issues: [Reportar problemas](https://github.com/suissa/purecore-reqify/issues)
-- Discussões: [Comunidade](https://github.com/suissa/purecore-reqify/discussions)
+- GitHub: [suissa/purecore-request2http](https://github.com/suissa/purecore-request2http)
+- Issues: [Reportar problemas](https://github.com/suissa/purecore-request2http/issues)
+- Discussões: [Comunidade](https://github.com/suissa/purecore-request2http/discussions)
 
 ---
 

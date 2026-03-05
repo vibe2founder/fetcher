@@ -93,10 +93,10 @@ Quando uma validação falha (erro 422), o sistema analisa a mensagem de erro e 
 O auto-healing está **habilitado por padrão** em todas as requisições:
 
 ```typescript
-import { reqify, asUrl } from "@purecore/reqify";
+import { request2http, asUrl } from "@vibe2founder/request2http";
 
 // Auto-healing ativo automaticamente
-const response = await reqify.get(asUrl("https://api.example.com/data"));
+const response = await request2http.get(asUrl("https://api.example.com/data"));
 
 if (response.healed) {
   console.log("Requisição foi curada:", response.healMessage);
@@ -106,7 +106,7 @@ if (response.healed) {
 ### Configuração de Retries
 
 ```typescript
-const response = await reqify.get(asUrl("https://api.example.com/data"), {
+const response = await request2http.get(asUrl("https://api.example.com/data"), {
   maxRetries: 3, // Número máximo de tentativas (padrão: 3)
   timeout: 5000, // Timeout inicial em ms (padrão: 5000)
   autoHeal: true, // Habilitar auto-healing (padrão: true)
@@ -116,7 +116,7 @@ const response = await reqify.get(asUrl("https://api.example.com/data"), {
 ### Desabilitar Auto-Healing
 
 ```typescript
-const response = await reqify.get(asUrl("https://api.example.com/data"), {
+const response = await request2http.get(asUrl("https://api.example.com/data"), {
   autoHeal: false, // Desabilita o auto-healing
 });
 ```
@@ -124,7 +124,7 @@ const response = await reqify.get(asUrl("https://api.example.com/data"), {
 ### Verificar se Foi Curado
 
 ```typescript
-const response = await reqify.get(asUrl("https://api.example.com/data"));
+const response = await request2http.get(asUrl("https://api.example.com/data"));
 
 if (response.healed) {
   console.log("✅ Requisição curada automaticamente");
@@ -140,7 +140,7 @@ if (response.healed) {
 Função exportada que pode ser usada para healing customizado:
 
 ```typescript
-import { autoHeal, HealContext } from "@purecore/reqify";
+import { autoHeal, HealContext } from "@vibe2founder/request2http";
 
 const context: HealContext = {
   error: new Error("HTTP 429: Too Many Requests"),
@@ -162,7 +162,7 @@ if (result.shouldRetry) {
 Função exportada para criar valores baseados em tipos:
 
 ```typescript
-import { createValueFromType } from "@purecore/reqify";
+import { createValueFromType } from "@vibe2founder/request2http";
 
 const value = createValueFromType("expected email");
 console.log(value); // "example@domain.com"
@@ -179,14 +179,14 @@ console.log(value3); // "00000000-0000-0000-0000-000000000000"
 ```typescript
 interface HealContext {
   error: any;
-  config: reqify;
+  config: request2http;
   response?: Response;
   attempt: number;
 }
 
 interface HealResult {
   shouldRetry: boolean;
-  config?: reqify;
+  config?: request2http;
   message?: string;
   data?: any;
 }
@@ -196,7 +196,7 @@ interface one-request-4-allResponse<T = any, D = any> {
   status: StatusCode;
   statusText: string;
   headers: Headers;
-  config: reqify<D>;
+  config: request2http<D>;
   request: Response;
   healed?: boolean;        // Indica se foi curado
   healMessage?: string;    // Mensagem do healing aplicado
@@ -209,7 +209,7 @@ interface one-request-4-allResponse<T = any, D = any> {
 
 ```typescript
 // API retorna 429 com header Retry-After: 2
-const response = await reqify.get(asUrl("https://api.example.com/data"));
+const response = await request2http.get(asUrl("https://api.example.com/data"));
 
 // one-request-4-all automaticamente:
 // 1. Detecta o 429
@@ -229,7 +229,7 @@ console.log(response.healMessage); // "Rate limited - retry after 2000ms"
 // Segunda tentativa: timeout 10s (falha)
 // Terceira tentativa: timeout 20s (sucesso)
 
-const response = await reqify.get(asUrl("https://slow-api.example.com/data"), {
+const response = await request2http.get(asUrl("https://slow-api.example.com/data"), {
   timeout: 5000,
   maxRetries: 3,
 });
@@ -242,7 +242,7 @@ console.log(response.healMessage); // "Timeout - increased to 20000ms"
 
 ```typescript
 // API retorna 422: "field 'email' expected string"
-const response = await reqify.post(asUrl("https://api.example.com/users"), {
+const response = await request2http.post(asUrl("https://api.example.com/users"), {
   name: "João",
 });
 
@@ -267,7 +267,7 @@ console.log(response.healMessage); // "Validation error - created value of expec
 4. **Log de healings**: Registre quando healings ocorrem para análise posterior
 
 ```typescript
-const response = await reqify.get(asUrl("https://api.example.com/data"));
+const response = await request2http.get(asUrl("https://api.example.com/data"));
 
 if (response.healed) {
   logger.warn("Auto-healing aplicado", {
@@ -282,7 +282,7 @@ if (response.healed) {
 
 ```typescript
 // Operação crítica - sem healing
-const response = await reqify.post(
+const response = await request2http.post(
   asUrl("https://api.example.com/payment"),
   paymentData,
   { autoHeal: false }

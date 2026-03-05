@@ -5,10 +5,10 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/npm/v/@purecore/reqify?style=flat-square&color=blue" alt="npm version">
-  <img src="https://img.shields.io/npm/dm/@purecore/reqify?style=flat-square&color=green" alt="downloads">
-  <img src="https://img.shields.io/npm/l/@purecore/reqify?style=flat-square&color=orange" alt="license">
-  <img src="https://img.shields.io/bundlephobia/min/@purecore/reqify?style=flat-square&color=purple" alt="bundle size">
+  <img src="https://img.shields.io/npm/v/@vibe2founder/request2http?style=flat-square&color=blue" alt="npm version">
+  <img src="https://img.shields.io/npm/dm/@vibe2founder/request2http?style=flat-square&color=green" alt="downloads">
+  <img src="https://img.shields.io/npm/l/@vibe2founder/request2http?style=flat-square&color=orange" alt="license">
+  <img src="https://img.shields.io/bundlephobia/min/@vibe2founder/request2http?style=flat-square&color=purple" alt="bundle size">
 </p>
 
 ---
@@ -53,13 +53,13 @@ Tired of heavy HTTP libraries? **one-request-4-all** is a lightweight, native No
 
 ```bash
 # npm
-npm install @purecore/reqify
+npm install @vibe2founder/request2http
 
 # yarn
-yarn add @purecore/reqify
+yarn add @vibe2founder/request2http
 
 # bun
-bun add @purecore/reqify
+bun add @vibe2founder/request2http
 ```
 
 ## 🚀 Quick Start
@@ -67,14 +67,14 @@ bun add @purecore/reqify
 ### Basic Usage
 
 ```typescript
-import reqify from "@purecore/reqify";
+import request2http from "@vibe2founder/request2http";
 
 // GET request
-const response = await reqify.get("https://api.example.com/users");
+const response = await request2http.get("https://api.example.com/users");
 console.log(response.data);
 
 // POST request
-const newUser = await reqify.post("https://api.example.com/users", {
+const newUser = await request2http.post("https://api.example.com/users", {
   name: "John Doe",
   email: "john@example.com",
 });
@@ -86,11 +86,11 @@ const newUser = await reqify.post("https://api.example.com/users", {
 // Before (with axios)
 import axios from "axios";
 
-// After (with reqify)
-import reqify from "@purecore/reqify";
+// After (with request2http)
+import request2http from "@vibe2founder/request2http";
 
 // Same interface, same usage!
-const response = await reqify.get("/api/users", {
+const response = await request2http.get("/api/users", {
   headers: {
     Authorization: "Bearer token",
   },
@@ -103,25 +103,25 @@ const response = await reqify.get("/api/users", {
 
 ```typescript
 // GET, DELETE, HEAD, OPTIONS
-await reqify.get<T>(url, config?)
-await reqify.delete<T>(url, config?)
-await reqify.head<T>(url, config?)
-await reqify.options<T>(url, config?)
+await request2http.get<T>(url, config?)
+await request2http.delete<T>(url, config?)
+await request2http.head<T>(url, config?)
+await request2http.options<T>(url, config?)
 
 // POST, PUT, PATCH
-await reqify.post<T>(url, data?, config?)
-await reqify.put<T>(url, data?, config?)
-await reqify.patch<T>(url, data?, config?)
+await request2http.post<T>(url, data?, config?)
+await request2http.put<T>(url, data?, config?)
+await request2http.patch<T>(url, data?, config?)
 
 // Generic request
-await reqify<T>(config)
-await reqify<T>(url, config)
+await request2http<T>(config)
+await request2http<T>(url, config)
 ```
 
 ### Request Configuration
 
 ```typescript
-interface reqify<D = any> {
+interface request2http<D = any> {
   url: string;
   method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH' | 'HEAD' | 'OPTIONS';
   headers?: Record<string, string>;
@@ -139,7 +139,7 @@ interface one-request-4-allResponse<T = any, D = any> {
   status: number;
   statusText: string;
   headers: Headers;
-  config: reqify<D>;
+  config: request2http<D>;
   request: Response;
 }
 ```
@@ -150,7 +150,7 @@ one-request-4-all includes a powerful **auto-healing** system that automatically
 
 ```typescript
 // Auto-healing is enabled by default
-const response = await reqify.get("https://api.example.com/data", {
+const response = await request2http.get("https://api.example.com/data", {
   maxRetries: 3, // Number of retry attempts (default: 3)
   timeout: 5000, // Initial timeout in ms (default: 5000)
   autoHeal: true, // Enable auto-healing (default: true)
@@ -180,7 +180,7 @@ if (response.healed) {
 When validation fails (422 error), one-request-4-all automatically creates values based on the expected type:
 
 ```typescript
-import { createValueFromType } from "@purecore/reqify";
+import { createValueFromType } from "@vibe2founder/request2http";
 
 createValueFromType("expected email"); // "example@domain.com"
 createValueFromType("must be number"); // 0
@@ -194,7 +194,7 @@ createValueFromType("expected uuid"); // "00000000-0000-0000-0000-000000000000"
 ### Query Parameters
 
 ```typescript
-const response = await reqify.get("https://api.example.com/users", {
+const response = await request2http.get("https://api.example.com/users", {
   params: {
     page: 1,
     limit: 10,
@@ -207,7 +207,7 @@ const response = await reqify.get("https://api.example.com/users", {
 ### Custom Headers
 
 ```typescript
-const response = await reqify.post("https://api.example.com/users", userData, {
+const response = await request2http.post("https://api.example.com/users", userData, {
   headers: {
     Authorization: "Bearer token123",
     "Content-Type": "application/json",
@@ -220,15 +220,15 @@ const response = await reqify.post("https://api.example.com/users", userData, {
 
 ```typescript
 // JSON (default)
-const jsonData = await reqify.get("/api/data");
+const jsonData = await request2http.get("/api/data");
 
 // Text response
-const textData = await reqify.get("/api/text", {
+const textData = await request2http.get("/api/text", {
   responseType: "text",
 });
 
 // Stream response
-const streamData = await reqify.get("/api/file", {
+const streamData = await request2http.get("/api/file", {
   responseType: "stream",
 });
 ```
@@ -237,7 +237,7 @@ const streamData = await reqify.get("/api/file", {
 
 ```typescript
 try {
-  const response = await reqify.get("/api/users/123");
+  const response = await request2http.get("/api/users/123");
   console.log(response.data);
 } catch (error) {
   if (error.response) {
@@ -263,7 +263,7 @@ try {
 import axios from "axios";
 
 // After
-import reqify from "@purecore/reqify";
+import request2http from "@vibe2founder/request2http";
 ```
 
 ### Step 2: Change the usage (if needed)
@@ -273,7 +273,7 @@ import reqify from "@purecore/reqify";
 const response = await axios.get("/api/users");
 
 // After (same syntax works!)
-const response = await reqify.get("/api/users");
+const response = await request2http.get("/api/users");
 ```
 
 ### Compatibility Notes
@@ -315,5 +315,5 @@ MIT License - see the [LICENSE](LICENSE) file for details.
 </p>
 
 <p align="center">
-  <a href="https://github.com/suissa/purecore-reqify">⭐ Star us on GitHub</a>
+  <a href="https://github.com/suissa/purecore-request2http">⭐ Star us on GitHub</a>
 </p>
